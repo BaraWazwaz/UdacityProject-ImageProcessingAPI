@@ -2,12 +2,26 @@ import supertest from 'supertest';
 import express from 'express';
 import router from '../routes/router.js';
 import sharp from 'sharp';
+import fs from 'fs';
 
 const app = express();
 app.use('/', router);
 const request = supertest(app);
 
+const thumbPath = 'resources/thumb';
+
+function clearThumbDir(): void {
+    if (fs.existsSync(thumbPath)) {
+        for (const file of fs.readdirSync(thumbPath)) {
+            fs.rmSync(`${thumbPath}/${file}`, { force: true });
+        }
+    }
+}
+
 describe('GET /api/images endpoint', () => {
+    beforeAll(() => clearThumbDir());
+    afterAll(() => clearThumbDir());
+
     it('GET query filename="windowsxp.jpg"&width=100&height=100 should return a 201 status code', async () => {
         const response = await request.get('/api/images?filename=windowsxp.jpg&width=100&height=100');
         expect(response.status).toEqual(201);

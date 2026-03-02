@@ -12,14 +12,24 @@ function isProperImagePath(filename: string): boolean {
     return fs.existsSync(path);
 }
 
-function isProperDimension(dimension: number): boolean {
-    return !isNaN(dimension) && dimension > 0;
+function correctedDimension(dimension: number): number | undefined {
+    if (isNaN(dimension) || dimension <= 0)
+        return undefined;
+    else
+        return dimension;
 }
 
-images.get('/', (req: express.Request, res: express.Response) => {
+function getOutputFilename(filename: string, width: number | undefined, height: number | undefined): string {
+    const filenameParts = filename.split('.');
+    const fileName = filenameParts[0];
+    const fileExtension = filenameParts[1];
+    return `${fileName}-w=${width}-h=${height}.${fileExtension}`;
+}
+
+images.get('/', async (req: express.Request, res: express.Response) => {
     const filename: string = req.query.filename as string;
-    const width: number = parseInt(req.query.width as string);
-    const height: number = parseInt(req.query.height as string);
+    let width: number | undefined = correctedDimension(parseInt(req.query.width as string));
+    let height: number | undefined = correctedDimension(parseInt(req.query.height as string));
 
     if (!filename) {
         res.status(400).send('Filename is required');
@@ -30,17 +40,15 @@ images.get('/', (req: express.Request, res: express.Response) => {
         return;
     }
 
+    const outputFilename: string = getOutputFilename(filename, width, height);
+
+    if (fs.existsSync(`${outputPath}/${outputFilename}`)) {
+        res.status(200).sendFile(fs.realpathSync(`${outputPath}/${outputFilename}`));
+        return;
+    }
+
     const image: sharp.Sharp = sharp(`${inputPath}/${filename}`);
-    if (isProperDimension(width))
-        if (isProperDimension(height))
-            image.resize(width, height);
-        else
-            image.resize(width);
-    else
-        if (isProperDimension(height))
-            image.resize(undefined, height);
-        else
-            image.resize();
+    image.resize(width, height);
 
     image
         .toFile(`${outputPath}/${filename}`)

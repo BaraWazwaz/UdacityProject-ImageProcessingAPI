@@ -6,7 +6,7 @@ const router: express.Router = express.Router();
 router.use('/api/images', images);
 
 router.get('/', (req: express.Request, res: express.Response) => {
-  res.send('Welcome to the Image Processing API');
+    res.send('Welcome to the Image Processing API');
 });
 
 export default router;

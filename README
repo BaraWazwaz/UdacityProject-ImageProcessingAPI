@@ -1,0 +1,88 @@
+# Image Processing API
+
+## Description
+
+A RESTful API built with **Express** and **TypeScript** that processes images using the **Sharp** library. It accepts image filenames and optional dimensions as query parameters, resizes the image accordingly, and returns the result. This project is part of the Udacity Full-Stack Web Developer Nanodegree program.
+
+## Setup
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Or to replicate from scratch:
+
+```bash
+npm init -y
+npm i express sharp typescript
+npm i -D @types/express @types/node @types/sharp @types/supertest nodemon \
+    eslint @eslint/js typescript-eslint globals eslint-config-prettier \
+    eslint-plugin-prettier prettier jasmine jasmine-spec-reporter supertest ts-node
+```
+
+## File Structure
+
+```
+Image Processing API/
+├── .git/                         # Git Version Control
+├── dist/                         # Compiled JavaScript Output
+├── node_modules/
+├── resources/
+│   ├── input/                    # Source Images to Process
+│   └── output/                   # Processed Image Output Cache
+├── spec/
+│   └── support/
+│       └── jasmine.json          # Jasmine Test Configuration
+├── src/
+│   ├── routes/
+│   │   ├── api/
+│   │   │   └── images.ts         # Image Processing Route Handler
+│   │   └── router.ts             # Main Express Router
+│   ├── tests/
+│   │   ├── helpers/
+│   │   │   └── reporter.ts       # Jasmine Spec Reporter Setup
+│   │   ├── images.spec.ts        # Tests for /api/images endpoint
+│   │   └── router.spec.ts        # Tests for / endpoint
+│   └── server.ts                 # Express App Entry Point
+├── .gitignore                    # Git Ignore File
+├── .prettierrc                   # Prettier Formatting Configuration
+├── eslint.config.js              # ESLint Configuration
+├── nodemon.json                  # Nodemon Watch Configuration
+├── package.json                  # Package Configuration
+├── package-lock.json             # Package Lock File
+├── README.md                     # Project Documentation
+└── tsconfig.json                 # TypeScript Configuration
+```
+
+## API Usage
+
+### `GET /api/images`
+
+Resizes an image and returns it.
+
+| Query Parameter | Type     | Required | Description                              |
+|:----------------|:---------|:---------|:-----------------------------------------|
+| `filename`      | `string` | Yes      | Name of the image in `resources/input/`   |
+| `width`         | `number` | No       | Target width in pixels                    |
+| `height`        | `number` | No       | Target height in pixels                   |
+
+**Examples:**
+
+```
+GET /api/images?filename=windowsxp.jpg&width=200&height=200
+GET /api/images?filename=windowsxp.jpg&width=400
+GET /api/images?filename=windowsxp.jpg
+```
+
+## Scripts
+
+| Script             | Description                          |
+|:-------------------|:-------------------------------------|
+| `npm run dev`      | Start dev server with nodemon        |
+| `npm run build`    | Compile TypeScript to `dist/`        |
+| `npm run start`    | Run the compiled production server   |
+| `npm run test`     | Build and run Jasmine tests          |
+| `npm run lint`     | Lint source files with ESLint        |
+| `npm run prettier` | Format source files with Prettier    |

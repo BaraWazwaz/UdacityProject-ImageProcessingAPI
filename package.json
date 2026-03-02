@@ -12,7 +12,7 @@
     "start": "node dist/server.js",
     "dev": "nodemon src/server.ts",
     "test": "npm run build && jasmine",
-    "prettier": "prettier --write \"src/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint . --fix"
   },
   "keywords": [],

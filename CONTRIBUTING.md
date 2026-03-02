@@ -35,5 +35,5 @@ Please make sure your code passes both before opening a pull request.
 
 ## Notes
 
-- Place any test images in `resources/input/` before running the server or tests.
-- The `resources/output/` directory is created automatically when images are processed.
+- Place any test images in `resources/full/` before running the server or tests.
+- The `resources/thumb/` directory is created automatically when images are processed.

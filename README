@@ -30,8 +30,8 @@ Image Processing API/
 ├── dist/                         # Compiled JavaScript Output
 ├── node_modules/
 ├── resources/
-│   ├── input/                    # Source Images to Process
-│   └── output/                   # Processed Image Output Cache
+│   ├── full/                     # Source Images to Process
+│   └── thumb/                    # Processed Image Output Cache
 ├── spec/
 │   └── support/
 │       └── jasmine.json          # Jasmine Test Configuration

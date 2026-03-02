@@ -2,8 +2,8 @@ import express from 'express';
 import sharp from 'sharp';
 import fs from 'fs';
 
-const inputPath = 'resources/input';
-const outputPath = 'resources/output';
+const inputPath = 'resources/full';
+const outputPath = 'resources/thumb';
 
 const images: express.Router = express.Router();
 

@@ -13,13 +13,15 @@ function isProperImagePath(filename: string): boolean {
 }
 
 function correctedDimension(dimension: number): number | undefined {
-    if (isNaN(dimension) || dimension <= 0)
-        return undefined;
-    else
-        return dimension;
+    if (isNaN(dimension) || dimension <= 0) return undefined;
+    else return dimension;
 }
 
-function getOutputFilename(filename: string, width: number | undefined, height: number | undefined): string {
+function getOutputFilename(
+    filename: string,
+    width: number | undefined,
+    height: number | undefined,
+): string {
     const filenameParts = filename.split('.');
     const fileName = filenameParts[0];
     const fileExtension = filenameParts[1];
@@ -28,8 +30,12 @@ function getOutputFilename(filename: string, width: number | undefined, height: 
 
 images.get('/', async (req: express.Request, res: express.Response) => {
     const filename: string = req.query.filename as string;
-    let width: number | undefined = correctedDimension(parseInt(req.query.width as string));
-    let height: number | undefined = correctedDimension(parseInt(req.query.height as string));
+    const width: number | undefined = correctedDimension(
+        parseInt(req.query.width as string),
+    );
+    const height: number | undefined = correctedDimension(
+        parseInt(req.query.height as string),
+    );
 
     if (!filename) {
         res.status(400).send('Filename is required');
@@ -43,7 +49,9 @@ images.get('/', async (req: express.Request, res: express.Response) => {
     const outputFilename: string = getOutputFilename(filename, width, height);
 
     if (fs.existsSync(`${outputPath}/${outputFilename}`)) {
-        res.status(200).sendFile(fs.realpathSync(`${outputPath}/${outputFilename}`));
+        res.status(200).sendFile(
+            fs.realpathSync(`${outputPath}/${outputFilename}`),
+        );
         return;
     }
 
@@ -55,7 +63,7 @@ images.get('/', async (req: express.Request, res: express.Response) => {
         .then(() =>
             res
                 .status(201)
-                .sendFile(fs.realpathSync(`${outputPath}/${outputFilename}`))
+                .sendFile(fs.realpathSync(`${outputPath}/${outputFilename}`)),
         )
         .catch((err) => {
             console.error(err);

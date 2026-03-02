@@ -23,7 +23,9 @@ describe('GET /api/images endpoint', () => {
     afterAll(() => clearThumbDir());
 
     it('GET query filename="windowsxp.jpg"&width=100&height=100 should return a 201 status code', async () => {
-        const response = await request.get('/api/images?filename=windowsxp.jpg&width=100&height=100');
+        const response = await request.get(
+            '/api/images?filename=windowsxp.jpg&width=100&height=100',
+        );
         expect(response.status).toEqual(201);
         expect(response.type).toEqual('image/jpeg');
         const imageMetadata = await sharp(response.body).metadata();
@@ -31,7 +33,9 @@ describe('GET /api/images endpoint', () => {
         expect(imageMetadata.height).toEqual(100);
     });
     it('GET query filename="windowsxp.jpg" should return a 201 status code and the original image', async () => {
-        const response = await request.get('/api/images?filename=windowsxp.jpg');
+        const response = await request.get(
+            '/api/images?filename=windowsxp.jpg',
+        );
         expect(response.status).toEqual(201);
         expect(response.type).toEqual('image/jpeg');
         const imageMetadata = await sharp(response.body).metadata();
@@ -39,7 +43,9 @@ describe('GET /api/images endpoint', () => {
         expect(imageMetadata.height).toEqual(804);
     });
     it('GET query filename="windowsxp.jpg" should return a 200 status code (caching)', async () => {
-        const response = await request.get('/api/images?filename=windowsxp.jpg');
+        const response = await request.get(
+            '/api/images?filename=windowsxp.jpg',
+        );
         expect(response.status).toEqual(200);
         expect(response.type).toEqual('image/jpeg');
         const imageMetadata = await sharp(response.body).metadata();

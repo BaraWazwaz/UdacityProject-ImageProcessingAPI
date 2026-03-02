@@ -51,11 +51,11 @@ images.get('/', async (req: express.Request, res: express.Response) => {
     image.resize(width, height);
 
     image
-        .toFile(`${outputPath}/${filename}`)
+        .toFile(`${outputPath}/${outputFilename}`)
         .then(() =>
             res
                 .status(201)
-                .sendFile(fs.realpathSync(`${outputPath}/${filename}`))
+                .sendFile(fs.realpathSync(`${outputPath}/${outputFilename}`))
         )
         .catch((err) => {
             console.error(err);

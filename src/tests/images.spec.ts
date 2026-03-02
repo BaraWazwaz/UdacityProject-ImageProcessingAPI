@@ -38,6 +38,14 @@ describe('GET /api/images endpoint', () => {
         expect(imageMetadata.width).toEqual(1000);
         expect(imageMetadata.height).toEqual(804);
     });
+    it('GET query filename="windowsxp.jpg" should return a 200 status code (caching)', async () => {
+        const response = await request.get('/api/images?filename=windowsxp.jpg');
+        expect(response.status).toEqual(200);
+        expect(response.type).toEqual('image/jpeg');
+        const imageMetadata = await sharp(response.body).metadata();
+        expect(imageMetadata.width).toEqual(1000);
+        expect(imageMetadata.height).toEqual(804);
+    });
     it('GET query [empty] should return a 400 status code', async () => {
         const response = await request.get('/api/images?');
         expect(response.status).toEqual(400);

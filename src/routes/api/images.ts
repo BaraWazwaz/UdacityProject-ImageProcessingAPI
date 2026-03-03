@@ -23,6 +23,18 @@ images.get('/', async (req: Request, res: Response) => {
             .send('Image not found');
         return;
     }
+    if (Number.isNaN(width)) {
+        res
+            .status(400)
+            .send('Width must be a positive number');
+        return;
+    }
+    if (Number.isNaN(height)) {
+        res
+            .status(400)
+            .send('Height must be a positive number');
+        return;
+    }
 
     const outputFilename: string = imageProcessing.getOutputImageFilename(filename, width, height);
 

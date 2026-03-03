@@ -2,7 +2,7 @@ import * as filesystem from '#utilities/filesystem';
 import sharp from 'sharp';
 import type { Request } from 'express';
 
-interface ImageQuery {
+export interface ImageQuery {
     filename: string | undefined;
     width: number | undefined;
     height: number | undefined;
@@ -10,20 +10,21 @@ interface ImageQuery {
 
 export function extractImageQueryParams(req: Request): ImageQuery {
     const filename: string | undefined = req.query.filename as string;
-    const width: number | undefined = correctedDimension(
-        parseInt(req.query.width as string),
-    );
-    const height: number | undefined = correctedDimension(
-        parseInt(req.query.height as string),
-    );
+    const width: number | undefined = req.query.width ? correctedDimension(
+        parseInt(req.query.width as string)
+    ) : undefined;
+    const height: number | undefined = req.query.height ? correctedDimension(
+        parseInt(req.query.height as string)
+    ) : undefined;
     return { filename, width, height };
 }
 
-export function correctedDimension(dimension: number): number | undefined {
-    if (Number.isNaN(dimension) || dimension <= 0)
+export function correctedDimension(dimension: number | undefined): number | undefined {
+    if (dimension === undefined)
         return undefined;
-    else
-        return dimension;
+    if (Number.isNaN(dimension) || dimension <= 0)
+        return NaN;
+    return dimension;
 }
 
 export function getOutputImageFilename(
@@ -42,9 +43,17 @@ export async function processImage(
     width: number | undefined,
     height: number | undefined,
 ): Promise<void> {
-    const image: sharp.Sharp = sharp(`${filesystem.inputPath}/${filename}`);
+    const image: sharp.Sharp = sharp(`${filesystem.INPUT_PATH}/${filename}`);
     image.resize(width, height);
     await image.toFile(
-        `${filesystem.outputPath}/${getOutputImageFilename(filename, width, height)}`,
+        `${filesystem.OUTPUT_PATH}/${getOutputImageFilename(filename, width, height)}`,
     );
+}
+
+export function getMetadataFromFilename(filename: string): Promise<sharp.Metadata> {
+    return sharp(`${filesystem.INPUT_PATH}/${filename}`).metadata();
+}
+
+export function getMetadataFromBody(body: Buffer): Promise<sharp.Metadata> {
+    return sharp(body).metadata();
 }

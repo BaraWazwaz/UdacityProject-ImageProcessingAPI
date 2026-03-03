@@ -1,73 +1,49 @@
-import express from 'express';
-import sharp from 'sharp';
-import fs from 'fs';
-
-const inputPath = 'resources/full';
-const outputPath = 'resources/thumb';
+import express, { type Request, type Response } from 'express';
+import * as filesystem from '#utilities/filesystem';
+import * as imageProcessing from '#utilities/imageProcessing';
 
 const images: express.Router = express.Router();
 
-function isProperImagePath(filename: string): boolean {
-    const path = `${inputPath}/${filename}`;
-    return fs.existsSync(path);
-}
+// Setup and Architecture
+// └─ Set up a project structure that promotes scalability
+//    └─ Image processing is not done in a separate module.
+//       [Fixed] moved image processing and filesystem logic to utilities directory
+images.get('/', async (req: Request, res: Response) => {
+    const { filename, width, height } = imageProcessing.extractImageQueryParams(req);
 
-function correctedDimension(dimension: number): number | undefined {
-    if (isNaN(dimension) || dimension <= 0) return undefined;
-    else return dimension;
-}
-
-function getOutputFilename(
-    filename: string,
-    width: number | undefined,
-    height: number | undefined,
-): string {
-    const filenameParts = filename.split('.');
-    const fileName = filenameParts[0];
-    const fileExtension = filenameParts[1];
-    return `${fileName}-w=${width}-h=${height}.${fileExtension}`;
-}
-
-images.get('/', async (req: express.Request, res: express.Response) => {
-    const filename: string = req.query.filename as string;
-    const width: number | undefined = correctedDimension(
-        parseInt(req.query.width as string),
-    );
-    const height: number | undefined = correctedDimension(
-        parseInt(req.query.height as string),
-    );
-
-    if (!filename) {
-        res.status(400).send('Filename is required');
+    if (filename === undefined) {
+        res
+            .status(400)
+            .send('Filename is required');
         return;
     }
-    if (!isProperImagePath(filename)) {
-        res.status(404).send('Image not found');
+    if (!filesystem.fileExistsInInput(filename)) {
+        res
+            .status(404)
+            .send('Image not found');
         return;
     }
 
-    const outputFilename: string = getOutputFilename(filename, width, height);
+    const outputFilename: string = imageProcessing.getOutputImageFilename(filename, width, height);
 
-    if (fs.existsSync(`${outputPath}/${outputFilename}`)) {
-        res.status(200).sendFile(
-            fs.realpathSync(`${outputPath}/${outputFilename}`),
-        );
+    if (filesystem.fileExistsInOutput(outputFilename)) {
+        res
+            .status(200)
+            .sendFile(filesystem.getAbsolutePath(outputFilename));
         return;
     }
 
-    const image: sharp.Sharp = sharp(`${inputPath}/${filename}`);
-    image.resize(width, height);
-
-    image
-        .toFile(`${outputPath}/${outputFilename}`)
-        .then(() =>
+    imageProcessing.processImage(filename, width, height)
+        .then(() => {
             res
                 .status(201)
-                .sendFile(fs.realpathSync(`${outputPath}/${outputFilename}`)),
-        )
+                .sendFile(filesystem.getAbsolutePath(outputFilename));
+        })
         .catch((err) => {
             console.error(err);
-            res.status(500).send('Error processing image');
+            res
+                .status(500)
+                .send('Error processing image');
         });
 });
 

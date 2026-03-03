@@ -5,7 +5,8 @@
   "description": "",
   "imports": {
     "#routes/*": "./dist/routes/*.js",
-    "#tests/*": "./dist/tests/*.js"
+    "#tests/*": "./dist/tests/*.js",
+    "#utilities/*": "./dist/utilities/*.js"
   },
   "scripts": {
     "build": "tsc",

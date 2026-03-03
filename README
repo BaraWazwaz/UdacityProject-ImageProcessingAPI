@@ -16,10 +16,14 @@ Or to replicate from scratch:
 
 ```bash
 npm init -y
-npm i express sharp typescript
-npm i -D @types/express @types/node @types/sharp @types/supertest nodemon \
-    eslint @eslint/js typescript-eslint globals eslint-config-prettier \
-    eslint-plugin-prettier prettier jasmine jasmine-spec-reporter supertest ts-node
+npm i \
+    cors express helmet sharp typescript
+npm i -D \
+    @eslint/js @types/cors @types/eslint @types/express \
+    @types/helmet @types/jasmine @types/node @types/nodemon @types/sharp \
+    @types/supertest eslint eslint-config-prettier eslint-plugin-prettier \
+    globals jasmine jasmine-spec-reporter nodemon prettier supertest ts-node \
+    typescript-eslint
 ```
 
 ## File Structure
@@ -45,6 +49,9 @@ Image Processing API/
 │   │   │   └── reporter.ts       # Jasmine Spec Reporter Setup
 │   │   ├── images.spec.ts        # Tests for /api/images endpoint
 │   │   └── router.spec.ts        # Tests for / endpoint
+│   ├── utilities/
+│   │   ├── filesystem.ts         # File System Utilities
+│   │   └── imageProcessing.ts    # Image Processing Utilities
 │   └── server.ts                 # Express App Entry Point
 ├── .gitignore                    # Git Ignore File
 ├── .prettierrc                   # Prettier Formatting Configuration
@@ -78,11 +85,11 @@ GET /api/images?filename=windowsxp.jpg
 
 ## Scripts
 
-| Script             | Description                          |
-|:-------------------|:-------------------------------------|
-| `npm run dev`      | Start dev server with nodemon        |
-| `npm run build`    | Compile TypeScript to `dist/`        |
-| `npm run start`    | Run the compiled production server   |
-| `npm run test`     | Build and run Jasmine tests          |
-| `npm run lint`     | Lint source files with ESLint        |
-| `npm run prettier` | Format source files with Prettier    |
+| Script           | Description                          |
+|:-----------------|:-------------------------------------|
+| `npm run dev`    | Start dev server with nodemon        |
+| `npm run build`  | Compile TypeScript to `dist/`        |
+| `npm run start`  | Run the compiled production server   |
+| `npm run test`   | Build and run Jasmine tests          |
+| `npm run lint`   | Lint source files with ESLint        |
+| `npm run format` | Format source files with Prettier    |

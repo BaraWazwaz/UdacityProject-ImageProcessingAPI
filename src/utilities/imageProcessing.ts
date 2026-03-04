@@ -35,15 +35,14 @@ export async function processImage(
     width: number | undefined,
     height: number | undefined,
 ): Promise<void> {
-    const image: sharp.Sharp = sharp(`${filesystem.INPUT_PATH}/${filename}`);
+    const image: sharp.Sharp = sharp(filesystem.getAbsolutePath(filename, filesystem.INPUT_PATH));
     image.resize(width, height);
-    await image.toFile(
-        `${filesystem.OUTPUT_PATH}/${getOutputImageFilename(filename, width, height)}`,
-    );
+    const fullPath = filesystem.getAbsolutePath(getOutputImageFilename(filename, width, height), filesystem.OUTPUT_PATH);
+    await image.toFile(fullPath);
 }
 
-export function getMetadataFromFilename(filename: string): Promise<sharp.Metadata> {
-    return sharp(`${filesystem.INPUT_PATH}/${filename}`).metadata();
+export function getMetadataFromFilename(filename: string, directory: string): Promise<sharp.Metadata> {
+    return sharp(filesystem.getAbsolutePath(filename, directory)).metadata();
 }
 
 export function getMetadataFromBody(body: Buffer): Promise<sharp.Metadata> {

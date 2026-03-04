@@ -8,16 +8,20 @@ const images: express.Router = express.Router();
 // └─ Set up a project structure that promotes scalability
 //    └─ Image processing is not done in a separate module.
 //       [Fixed] moved image processing and filesystem logic to utilities directory
+// Functionality
+// └─ Implement comprehensive error handling for the image API
+//    └─ Unable to review error messages.
+//       [Fixed] added error handling for missing filename, invalid dimensions, and image processing errors
 images.get('/', async (req: Request, res: Response) => {
     const { filename, width, height } = imageProcessing.extractImageQueryParams(req);
 
-    if (filename === undefined) {
+    if (!filename) {
         res
             .status(400)
             .send('Filename is required');
         return;
     }
-    if (!filesystem.fileExistsInInput(filename)) {
+    if (!filesystem.fileExists(filename, filesystem.INPUT_PATH)) {
         res
             .status(404)
             .send('Image not found');
@@ -38,10 +42,10 @@ images.get('/', async (req: Request, res: Response) => {
 
     const outputFilename: string = imageProcessing.getOutputImageFilename(filename, width, height);
 
-    if (filesystem.fileExistsInOutput(outputFilename)) {
+    if (filesystem.fileExists(outputFilename, filesystem.OUTPUT_PATH)) {
         res
             .status(200)
-            .sendFile(filesystem.getAbsolutePath(outputFilename));
+            .sendFile(filesystem.getAbsolutePath(outputFilename, filesystem.OUTPUT_PATH));
         return;
     }
 
@@ -49,7 +53,7 @@ images.get('/', async (req: Request, res: Response) => {
         .then(() => {
             res
                 .status(201)
-                .sendFile(filesystem.getAbsolutePath(outputFilename));
+                .sendFile(filesystem.getAbsolutePath(outputFilename, filesystem.OUTPUT_PATH));
         })
         .catch((err) => {
             console.error(err);

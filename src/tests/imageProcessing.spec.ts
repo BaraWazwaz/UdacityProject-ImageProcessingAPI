@@ -1,7 +1,16 @@
 import * as imageProcessing from '#utilities/imageProcessing';
+import * as filesystem from '#utilities/filesystem';
 import type { Request } from 'express';
 
+const REAL_IMAGE = 'windowsxp.jpg';
+
 describe('imageProcessing utility', () => {
+
+    describe('Environment Setup', () => {
+        it('should have the test image windowsxp.jpg in the input directory', () => {
+            expect(filesystem.fileExists(REAL_IMAGE, filesystem.INPUT_PATH)).toBeTrue();
+        });
+    });
 
     describe('extractImageQueryParams', () => {
         it('All parameters provided', () => {
@@ -85,6 +94,36 @@ describe('imageProcessing utility', () => {
         it('JPEG extension', () => {
             expect(imageProcessing.getOutputImageFilename('photo.jpeg', 100, 100).endsWith('.jpeg'))
                 .toBeTrue();
+        });
+    });
+
+    describe('Image Processing Functions', () => {
+        const TEST_WIDTH = 100;
+        const TEST_HEIGHT = 100;
+        const OUTPUT_FILE = 'windowsxp-w=100-h=100.jpg';
+
+        afterEach(() => {
+            if (filesystem.fileExists(OUTPUT_FILE, filesystem.OUTPUT_PATH)) {
+                filesystem.deleteFile(OUTPUT_FILE, filesystem.OUTPUT_PATH);
+            }
+        });
+
+        it('processImage should create a resized image', async () => {
+            await imageProcessing.processImage(REAL_IMAGE, TEST_WIDTH, TEST_HEIGHT);
+            expect(filesystem.fileExists(OUTPUT_FILE, filesystem.OUTPUT_PATH)).toBeTrue();
+        });
+
+        it('getMetadataFromFilename should return image metadata', async () => {
+            const metadata = await imageProcessing.getMetadataFromFilename(REAL_IMAGE, filesystem.INPUT_PATH);
+            expect(metadata.width).toEqual(1000);
+            expect(metadata.height).toEqual(804);
+        });
+
+        it('getMetadataFromBody should return image metadata from body', async () => {
+            const buffer: Buffer = filesystem.readFile(REAL_IMAGE, filesystem.INPUT_PATH);
+            const metadata = await imageProcessing.getMetadataFromBody(buffer);
+            expect(metadata.width).toEqual(1000);
+            expect(metadata.height).toEqual(804);
         });
     });
 });

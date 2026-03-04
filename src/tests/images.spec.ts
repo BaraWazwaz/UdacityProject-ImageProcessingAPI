@@ -11,7 +11,7 @@ const request = supertest(app);
 function clearThumbDir(): void {
     filesystem
         .getFiles(filesystem.OUTPUT_PATH)
-        .forEach(file => filesystem.deleteFile(file));
+        .forEach(file => filesystem.deleteFile(file, filesystem.OUTPUT_PATH));
 }
 
 describe('GET /api/images endpoint', () => {
@@ -26,7 +26,7 @@ describe('GET /api/images endpoint', () => {
             const imageMetadata = await imageProcessing.getMetadataFromBody(response.body);
             expect(imageMetadata.width).toEqual(100);
             expect(imageMetadata.height).toEqual(100);
-            expect(filesystem.fileExistsInOutput('windowsxp-w=100-h=100.jpg')).toBeTruthy();
+            expect(filesystem.fileExists('windowsxp-w=100-h=100.jpg', filesystem.OUTPUT_PATH)).toBeTruthy();
         });
         it('Repeated request should return a 200 status code (caching)', async () => {
             const response = await request.get('/api/images?filename=windowsxp.jpg&width=100&height=100');
@@ -35,7 +35,7 @@ describe('GET /api/images endpoint', () => {
             const imageMetadata = await imageProcessing.getMetadataFromBody(response.body);
             expect(imageMetadata.width).toEqual(100);
             expect(imageMetadata.height).toEqual(100);
-            expect(filesystem.fileExistsInOutput('windowsxp-w=100-h=100.jpg')).toBeTruthy();
+            expect(filesystem.fileExists('windowsxp-w=100-h=100.jpg', filesystem.OUTPUT_PATH)).toBeTruthy();
         });
     });
     describe('Invalid queries', () => {

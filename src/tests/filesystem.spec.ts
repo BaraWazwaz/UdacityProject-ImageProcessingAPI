@@ -30,16 +30,13 @@ describe('filesystem utility', () => {
         expect(filesystem.OUTPUT_PATH).toEqual('resources/thumb');
     });
 
-    it('fileExistsInInput', () => {
-        expect(filesystem.fileExistsInInput(TEST_THUMB_FILE)).toBeTrue();
-        expect(filesystem.fileExistsInInput('does-not-exist.jpg')).toBeFalse();
-        expect(filesystem.fileExistsInInput('')).toBeFalse();
-    });
-
-    it('fileExistsInOutput', () => {
-        expect(filesystem.fileExistsInOutput(TEST_THUMB_FILE)).toBeTrue();
-        expect(filesystem.fileExistsInOutput('does-not-exist.jpg')).toBeFalse();
-        expect(filesystem.fileExistsInOutput('')).toBeFalse();
+    it('fileExists', () => {
+        expect(filesystem.fileExists(TEST_THUMB_FILE, filesystem.INPUT_PATH)).toBeTrue();
+        expect(filesystem.fileExists('does-not-exist.jpg', filesystem.INPUT_PATH)).toBeFalse();
+        expect(filesystem.fileExists('', filesystem.INPUT_PATH)).toBeFalse();
+        expect(filesystem.fileExists(TEST_THUMB_FILE, filesystem.OUTPUT_PATH)).toBeTrue();
+        expect(filesystem.fileExists('does-not-exist.jpg', filesystem.OUTPUT_PATH)).toBeFalse();
+        expect(filesystem.fileExists('', filesystem.OUTPUT_PATH)).toBeFalse();
     });
 
     it('getFiles', () => {
@@ -48,8 +45,13 @@ describe('filesystem utility', () => {
     });
 
     it('deleteFile', () => {
-        expect(filesystem.fileExistsInOutput(TEST_THUMB_FILE)).toBeTrue();
-        filesystem.deleteFile(TEST_THUMB_FILE);
-        expect(filesystem.fileExistsInOutput(TEST_THUMB_FILE)).toBeFalse();
+        expect(filesystem.fileExists(TEST_THUMB_FILE, filesystem.OUTPUT_PATH)).toBeTrue();
+        filesystem.deleteFile(TEST_THUMB_FILE, filesystem.OUTPUT_PATH);
+        expect(filesystem.fileExists(TEST_THUMB_FILE, filesystem.OUTPUT_PATH)).toBeFalse();
+    });
+
+    it('readFile', () => {
+        const buffer: Buffer = filesystem.readFile(TEST_THUMB_FILE, filesystem.INPUT_PATH);
+        expect(buffer).toBeInstanceOf(Buffer);
     });
 });

@@ -10,21 +10,13 @@ export interface ImageQuery {
 
 export function extractImageQueryParams(req: Request): ImageQuery {
     const filename: string | undefined = req.query.filename as string;
-    const width: number | undefined = req.query.width ? correctedDimension(
-        parseInt(req.query.width as string)
-    ) : undefined;
-    const height: number | undefined = req.query.height ? correctedDimension(
-        parseInt(req.query.height as string)
-    ) : undefined;
+    let width: number | undefined = parseInt(req.query.width as string);
+    let height: number | undefined = parseInt(req.query.height as string);
+    if (width <= 0)
+        width = NaN;
+    if (height <= 0)
+        height = NaN;
     return { filename, width, height };
-}
-
-export function correctedDimension(dimension: number | undefined): number | undefined {
-    if (dimension === undefined)
-        return undefined;
-    if (Number.isNaN(dimension) || dimension <= 0)
-        return NaN;
-    return dimension;
 }
 
 export function getOutputImageFilename(

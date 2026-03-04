@@ -15,15 +15,15 @@ describe('imageProcessing utility', () => {
             const req = { query: {} } as unknown as Request;
             const result = imageProcessing.extractImageQueryParams(req);
             expect(result.filename).toBeUndefined();
-            expect(result.width).toBeUndefined();
-            expect(result.height).toBeUndefined();
+            expect(result.width).toBeNaN();
+            expect(result.height).toBeNaN();
         });
         it('Only filename provided', () => {
             const req = { query: { filename: 'cat.jpg' } } as unknown as Request;
             const result = imageProcessing.extractImageQueryParams(req);
             expect(result.filename).toEqual('cat.jpg');
-            expect(result.width).toBeUndefined();
-            expect(result.height).toBeUndefined();
+            expect(result.width).toBeNaN();
+            expect(result.height).toBeNaN();
         });
         it('Zero width', () => {
             const req = { query: { filename: 'cat.jpg', width: '0' } } as unknown as Request;
@@ -54,24 +54,6 @@ describe('imageProcessing utility', () => {
             const req = { query: { filename: 'cat.jpg', height: 'xyz' } } as unknown as Request;
             const result = imageProcessing.extractImageQueryParams(req);
             expect(result.height).toBeNaN();
-        });
-    });
-
-    describe('correctedDimension', () => {
-        it('Positive value', () => {
-            expect(imageProcessing.correctedDimension(300)).toEqual(300);
-        });
-        it('Zero value', () => {
-            expect(imageProcessing.correctedDimension(0)).toBeNaN();
-        });
-        it('Negative value', () => {
-            expect(imageProcessing.correctedDimension(-1)).toBeNaN();
-        });
-        it('NaN value', () => {
-            expect(imageProcessing.correctedDimension(NaN)).toBeNaN();
-        });
-        it('Undefined value', () => {
-            expect(imageProcessing.correctedDimension(undefined)).toBeUndefined();
         });
     });
 

@@ -101,7 +101,7 @@ describe('GET /api/images endpoint', () => {
         });
         it('Zero height should return a 400 status code', async () => {
             const response = await request.get(
-                '/api/images?filename=windowsxp.jpg&width=100&width=100&height=0',
+                '/api/images?filename=windowsxp.jpg&width=100&height=0',
             );
             expect(response.status).toEqual(400);
             expect(response.text).toEqual(

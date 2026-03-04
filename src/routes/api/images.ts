@@ -4,14 +4,6 @@ import * as imageProcessing from '#utilities/imageProcessing';
 
 const images: express.Router = express.Router();
 
-// Setup and Architecture
-// └─ Set up a project structure that promotes scalability
-//    └─ Image processing is not done in a separate module.
-//       [Fixed] moved image processing and filesystem logic to utilities directory
-// Functionality
-// └─ Implement comprehensive error handling for the image API
-//    └─ Unable to review error messages.
-//       [Fixed] added error handling for missing filename, invalid dimensions, and image processing errors
 images.get('/', (req: Request, res: Response) => {
     const { filename, width, height } =
         imageProcessing.extractImageQueryParams(req);

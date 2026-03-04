@@ -39,46 +39,20 @@ describe('imageProcessing utility', () => {
             expect(result.width).toBeNaN();
             expect(result.height).toBeNaN();
         });
-        it('Zero width', () => {
+        it('Negative or zero dimensions', () => {
             const req = {
-                query: { filename: 'cat.jpg', width: '0' },
+                query: { filename: 'cat.jpg', width: '-5', height: '0' },
             } as unknown as Request;
             const result = imageProcessing.extractImageQueryParams(req);
             expect(result.width).toBeNaN();
-        });
-        it('Negative width', () => {
-            const req = {
-                query: { filename: 'cat.jpg', width: '-5' },
-            } as unknown as Request;
-            const result = imageProcessing.extractImageQueryParams(req);
-            expect(result.width).toBeNaN();
-        });
-        it('Non-numeric width', () => {
-            const req = {
-                query: { filename: 'cat.jpg', width: 'abc' },
-            } as unknown as Request;
-            const result = imageProcessing.extractImageQueryParams(req);
-            expect(result.width).toBeNaN();
-        });
-        it('Zero height', () => {
-            const req = {
-                query: { filename: 'cat.jpg', height: '0' },
-            } as unknown as Request;
-            const result = imageProcessing.extractImageQueryParams(req);
             expect(result.height).toBeNaN();
         });
-        it('Negative height', () => {
+        it('Non-numeric dimensions', () => {
             const req = {
-                query: { filename: 'cat.jpg', height: '-10' },
+                query: { filename: 'cat.jpg', width: '200a', height: 'xyz' },
             } as unknown as Request;
             const result = imageProcessing.extractImageQueryParams(req);
-            expect(result.height).toBeNaN();
-        });
-        it('Non-numeric height', () => {
-            const req = {
-                query: { filename: 'cat.jpg', height: 'xyz' },
-            } as unknown as Request;
-            const result = imageProcessing.extractImageQueryParams(req);
+            expect(result.width).toBeNaN();
             expect(result.height).toBeNaN();
         });
     });

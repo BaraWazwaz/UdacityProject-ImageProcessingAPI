@@ -12,8 +12,8 @@ export function extractImageQueryParams(req: Request): ImageQuery {
     const filename: string | undefined = req.query.filename as string;
     let width: number | undefined = parseInt(req.query.width as string);
     let height: number | undefined = parseInt(req.query.height as string);
-    if (width <= 0) width = NaN;
-    if (height <= 0) height = NaN;
+    if (width <= 0 || `${width}` !== req.query.width) width = NaN;
+    if (height <= 0 || `${height}` !== req.query.height) height = NaN;
     return { filename, width, height };
 }
 

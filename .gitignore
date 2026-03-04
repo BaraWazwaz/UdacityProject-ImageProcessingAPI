@@ -1,8 +1,5 @@
 node_modules/
-dist/
+dist/*
 .env
 .vscode/
-.prettierrc
-eslint.config.js
-nodemon.json
 package-lock.json

@@ -27,16 +27,22 @@ images.get('/', async (req: Request, res: Response) => {
             .send('Image not found');
         return;
     }
+    if (Number.isNaN(width) && Number.isNaN(height)) {
+        res
+            .status(400)
+            .send('Width and height must be provided as positive numbers');
+        return;
+    }
     if (Number.isNaN(width)) {
         res
             .status(400)
-            .send('Width must be a positive number');
+            .send('Width must be provided as a positive number');
         return;
     }
     if (Number.isNaN(height)) {
         res
             .status(400)
-            .send('Height must be a positive number');
+            .send('Height must be provided as a positive number');
         return;
     }
 

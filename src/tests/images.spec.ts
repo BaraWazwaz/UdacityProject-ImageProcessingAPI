@@ -11,7 +11,12 @@ const request = supertest(app);
 function clearThumbDir(): void {
     filesystem
         .getFiles(filesystem.OUTPUT_PATH)
-        .forEach(file => filesystem.deleteFile(file, filesystem.OUTPUT_PATH));
+        .forEach((file) => filesystem.deleteFile(file, filesystem.OUTPUT_PATH));
+}
+
+interface ImageMetadata {
+    width: number;
+    height: number;
 }
 
 describe('GET /api/images endpoint', () => {
@@ -20,27 +25,47 @@ describe('GET /api/images endpoint', () => {
 
     describe('Valid queries', () => {
         it('All parameters provided should return a 201 status code', async () => {
-            const response = await request.get('/api/images?filename=windowsxp.jpg&width=100&height=100');
+            const response = await request.get(
+                '/api/images?filename=windowsxp.jpg&width=100&height=100',
+            );
             expect(response.status).toEqual(201);
             expect(response.type).toEqual('image/jpeg');
-            const imageMetadata = await imageProcessing.getMetadataFromBody(response.body);
+            const imageMetadata = (await imageProcessing.getMetadataFromBody(
+                response.body as Buffer,
+            )) as ImageMetadata;
             expect(imageMetadata.width).toEqual(100);
             expect(imageMetadata.height).toEqual(100);
-            expect(filesystem.fileExists('windowsxp-w=100-h=100.jpg', filesystem.OUTPUT_PATH)).toBeTruthy();
+            expect(
+                filesystem.fileExists(
+                    'windowsxp-w=100-h=100.jpg',
+                    filesystem.OUTPUT_PATH,
+                ),
+            ).toBeTruthy();
         });
         it('Repeated request should return a 200 status code (caching)', async () => {
-            const response = await request.get('/api/images?filename=windowsxp.jpg&width=100&height=100');
+            const response = await request.get(
+                '/api/images?filename=windowsxp.jpg&width=100&height=100',
+            );
             expect(response.status).toEqual(200);
             expect(response.type).toEqual('image/jpeg');
-            const imageMetadata = await imageProcessing.getMetadataFromBody(response.body);
+            const imageMetadata = (await imageProcessing.getMetadataFromBody(
+                response.body as Buffer,
+            )) as ImageMetadata;
             expect(imageMetadata.width).toEqual(100);
             expect(imageMetadata.height).toEqual(100);
-            expect(filesystem.fileExists('windowsxp-w=100-h=100.jpg', filesystem.OUTPUT_PATH)).toBeTruthy();
+            expect(
+                filesystem.fileExists(
+                    'windowsxp-w=100-h=100.jpg',
+                    filesystem.OUTPUT_PATH,
+                ),
+            ).toBeTruthy();
         });
     });
     describe('Invalid queries', () => {
         it('Filename missing extension should return a 404 status code', async () => {
-            const response = await request.get('/api/images?filename=windowsxp');
+            const response = await request.get(
+                '/api/images?filename=windowsxp',
+            );
             expect(response.status).toEqual(404);
             expect(response.text).toEqual('Image not found');
         });
@@ -50,54 +75,92 @@ describe('GET /api/images endpoint', () => {
             expect(response.text).toEqual('Filename is required');
         });
         it('Missing width and height should return a 400 status code', async () => {
-            const response = await request.get('/api/images?filename=windowsxp.jpg');
+            const response = await request.get(
+                '/api/images?filename=windowsxp.jpg',
+            );
             expect(response.status).toEqual(400);
-            expect(response.text).toEqual('Width and height must be provided as positive numbers');
+            expect(response.text).toEqual(
+                'Width and height must be provided as positive numbers',
+            );
         });
         it('Non existing filename should return a 404 status code', async () => {
-            const response = await request.get('/api/images?filename=nonexistingimage.jpg');
+            const response = await request.get(
+                '/api/images?filename=nonexistingimage.jpg',
+            );
             expect(response.status).toEqual(404);
             expect(response.text).toEqual('Image not found');
         });
         it('Zero width should return a 400 status code', async () => {
-            const response = await request.get('/api/images?filename=windowsxp.jpg&width=0&height=100');
+            const response = await request.get(
+                '/api/images?filename=windowsxp.jpg&width=0&height=100',
+            );
             expect(response.status).toEqual(400);
-            expect(response.text).toEqual('Width must be provided as a positive number');
+            expect(response.text).toEqual(
+                'Width must be provided as a positive number',
+            );
         });
         it('Zero height should return a 400 status code', async () => {
-            const response = await request.get('/api/images?filename=windowsxp.jpg&width=100&width=100&height=0');
+            const response = await request.get(
+                '/api/images?filename=windowsxp.jpg&width=100&width=100&height=0',
+            );
             expect(response.status).toEqual(400);
-            expect(response.text).toEqual('Height must be provided as a positive number');
+            expect(response.text).toEqual(
+                'Height must be provided as a positive number',
+            );
         });
         it('Non number width should return a 400 status code', async () => {
-            const response = await request.get('/api/images?filename=windowsxp.jpg&width=nonnumber&height=100');
+            const response = await request.get(
+                '/api/images?filename=windowsxp.jpg&width=nonnumber&height=100',
+            );
             expect(response.status).toEqual(400);
-            expect(response.text).toEqual('Width must be provided as a positive number');
+            expect(response.text).toEqual(
+                'Width must be provided as a positive number',
+            );
         });
         it('Non number height should return a 400 status code', async () => {
-            const response = await request.get('/api/images?filename=windowsxp.jpg&width=100&height=nonnumber');
+            const response = await request.get(
+                '/api/images?filename=windowsxp.jpg&width=100&height=nonnumber',
+            );
             expect(response.status).toEqual(400);
-            expect(response.text).toEqual('Height must be provided as a positive number');
+            expect(response.text).toEqual(
+                'Height must be provided as a positive number',
+            );
         });
         it('Missing width should return a 400 status code', async () => {
-            const response = await request.get('/api/images?filename=windowsxp.jpg&height=100');
+            const response = await request.get(
+                '/api/images?filename=windowsxp.jpg&height=100',
+            );
             expect(response.status).toEqual(400);
-            expect(response.text).toEqual('Width must be provided as a positive number');
+            expect(response.text).toEqual(
+                'Width must be provided as a positive number',
+            );
         });
         it('Missing height should return a 400 status code', async () => {
-            const response = await request.get('/api/images?filename=windowsxp.jpg&width=100');
+            const response = await request.get(
+                '/api/images?filename=windowsxp.jpg&width=100',
+            );
             expect(response.status).toEqual(400);
-            expect(response.text).toEqual('Height must be provided as a positive number');
+            expect(response.text).toEqual(
+                'Height must be provided as a positive number',
+            );
         });
         it('Negative width should return a 400 status code', async () => {
-            const response = await request.get('/api/images?filename=windowsxp.jpg&width=-1&height=100');
+            const response = await request.get(
+                '/api/images?filename=windowsxp.jpg&width=-1&height=100',
+            );
             expect(response.status).toEqual(400);
-            expect(response.text).toEqual('Width must be provided as a positive number');
+            expect(response.text).toEqual(
+                'Width must be provided as a positive number',
+            );
         });
         it('Negative height should return a 400 status code', async () => {
-            const response = await request.get('/api/images?filename=windowsxp.jpg&width=100&height=-1');
+            const response = await request.get(
+                '/api/images?filename=windowsxp.jpg&width=100&height=-1',
+            );
             expect(response.status).toEqual(400);
-            expect(response.text).toEqual('Height must be provided as a positive number');
+            expect(response.text).toEqual(
+                'Height must be provided as a positive number',
+            );
         });
     });
 });

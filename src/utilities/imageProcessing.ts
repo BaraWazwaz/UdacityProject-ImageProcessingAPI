@@ -6,16 +6,14 @@ export interface ImageQuery {
     filename: string | undefined;
     width: number | undefined;
     height: number | undefined;
-};
+}
 
 export function extractImageQueryParams(req: Request): ImageQuery {
     const filename: string | undefined = req.query.filename as string;
     let width: number | undefined = parseInt(req.query.width as string);
     let height: number | undefined = parseInt(req.query.height as string);
-    if (width <= 0)
-        width = NaN;
-    if (height <= 0)
-        height = NaN;
+    if (width <= 0) width = NaN;
+    if (height <= 0) height = NaN;
     return { filename, width, height };
 }
 
@@ -35,13 +33,21 @@ export async function processImage(
     width: number | undefined,
     height: number | undefined,
 ): Promise<void> {
-    const image: sharp.Sharp = sharp(filesystem.getAbsolutePath(filename, filesystem.INPUT_PATH));
+    const image: sharp.Sharp = sharp(
+        filesystem.getAbsolutePath(filename, filesystem.INPUT_PATH),
+    );
     image.resize(width, height);
-    const fullPath = filesystem.getAbsolutePath(getOutputImageFilename(filename, width, height), filesystem.OUTPUT_PATH);
+    const fullPath = filesystem.getAbsolutePath(
+        getOutputImageFilename(filename, width, height),
+        filesystem.OUTPUT_PATH,
+    );
     await image.toFile(fullPath);
 }
 
-export function getMetadataFromFilename(filename: string, directory: string): Promise<sharp.Metadata> {
+export function getMetadataFromFilename(
+    filename: string,
+    directory: string,
+): Promise<sharp.Metadata> {
     return sharp(filesystem.getAbsolutePath(filename, directory)).metadata();
 }
 

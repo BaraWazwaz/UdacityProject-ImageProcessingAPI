@@ -1,7 +1,6 @@
 {
   "name": "image-processing-api",
-  "version": "1.0.0",
-  "type": "module",
+  "version": "1.1.0",
   "description": "",
   "imports": {
     "#routes/*": "./dist/routes/*.js",
@@ -14,7 +13,7 @@
     "dev": "nodemon src/server.ts",
     "test": "npm run build && jasmine",
     "format": "prettier --write \"src/**/*.ts\"",
-    "lint": "eslint . --fix"
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
@@ -23,13 +22,12 @@
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "helmet": "^8.1.0",
-    "sharp": "^0.34.5",
-    "typescript": "^5.9.3"
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
-    "@eslint/js": "^9.14.0",
+    "@eslint/eslintrc": "^3.3.4",
+    "@eslint/js": "^9.39.3",
     "@types/cors": "^2.8.19",
-    "@types/eslint": "^9.6.1",
     "@types/express": "^5.0.6",
     "@types/helmet": "^4.0.0",
     "@types/jasmine": "^6.0.0",
@@ -37,9 +35,7 @@
     "@types/nodemon": "^3.1.1",
     "@types/sharp": "^0.32.0",
     "@types/supertest": "^7.2.0",
-    "eslint": "^9.14.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.5",
+    "eslint": "^9.39.3",
     "globals": "^17.4.0",
     "jasmine": "^6.1.0",
     "jasmine-spec-reporter": "^7.0.0",
@@ -47,6 +43,7 @@
     "prettier": "^3.8.1",
     "supertest": "^7.2.2",
     "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
     "typescript-eslint": "^8.56.1"
   }
 }

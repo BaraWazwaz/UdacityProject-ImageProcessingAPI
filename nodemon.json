@@ -1,0 +1,13 @@
+{
+    "watch": [
+        "src"
+    ],
+    "ext": "js,json,ts",
+    "ignore": [
+        "src/tests",
+        "node_modules",
+        "resources",
+        "spec"
+    ],
+    "exec": "npm run build && npm run start"
+}
